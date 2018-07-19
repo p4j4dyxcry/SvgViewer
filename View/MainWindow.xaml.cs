@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using SvgViewer.Core;
 
-namespace SvgViewer
+namespace SvgViewer.View
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
@@ -16,7 +17,9 @@ namespace SvgViewer
 
         private void OnDragStart(object sender, MouseButtonEventArgs e)
         {
-            if (sender is FrameworkElement frameworkElement && frameworkElement.DataContext != null && frameworkElement.DataContext is SvgVm svgVm)
+            if (sender is FrameworkElement frameworkElement && 
+                frameworkElement.DataContext != null && 
+                frameworkElement.DataContext is IFileObject svgVm)
             {
                 var dataObject = new DataObject();
                 dataObject.SetData(DataFormats.FileDrop, new[] { Path.GetFullPath(svgVm.FilePath) });

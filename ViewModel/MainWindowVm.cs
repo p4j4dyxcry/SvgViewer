@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
+using SvgViewer.Utility;
 
-namespace SvgViewer
+namespace SvgViewer.ViewModel
 {
     public class MainWindowVm : NotifyPropertyChanger
     {
@@ -31,7 +32,6 @@ namespace SvgViewer
                     ItemsView.Filter = x => x.ToString().Contains(_filterWord);
             }
         }
-
         public MainWindowVm()
         {
             var svgs = Directory.EnumerateFiles("Svgs", "*.svg", SearchOption.AllDirectories);

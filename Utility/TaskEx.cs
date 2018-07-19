@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SvgViewer
+namespace SvgViewer.Utility
 {
     public static class TaskEx
     {

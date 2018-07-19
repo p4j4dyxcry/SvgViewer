@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SvgViewer
+namespace SvgViewer.Utility
 {
     public static class FreezableEx
     {

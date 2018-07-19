@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SvgViewer
+namespace SvgViewer.Core
 {
     public class ThumbnailService
     {

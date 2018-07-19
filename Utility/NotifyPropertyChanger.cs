@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using SvgViewer.Properties;
 
-namespace SvgViewer
+namespace SvgViewer.Utility
 {
     public class NotifyPropertyChanger : INotifyPropertyChanged
     {

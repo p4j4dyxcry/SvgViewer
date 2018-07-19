@@ -6,8 +6,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Xml;
+using SvgViewer.Utility;
 
-namespace SvgViewer
+namespace SvgViewer.Core
 {
     internal static class SvgThumbnailUtil
     {

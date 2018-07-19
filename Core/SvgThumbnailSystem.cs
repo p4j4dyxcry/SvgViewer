@@ -5,17 +5,16 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using SvgViewer.Utility;
 
-namespace SvgViewer
+namespace SvgViewer.Core
 {
     public class SvgUtilSetupInfo
     {
         public Brush Stroke { get; set; } = Brushes.Black;
         public Brush Fill { get; set; } = Brushes.Gray;
         public double StrokeThickness { get; set; } = 1;
-
         public PenLineJoin StrokeLineJoin { get; set; } = PenLineJoin.Round;
-
         public int Width { get; set; } = 128;
         public int Height { get; set; } = 128;
     }
@@ -82,6 +81,9 @@ namespace SvgViewer
 
         public ImageSource GetImageSourceAsync(string filePath, ImageSource _default, Action<ImageSource> onLoaded)
         {
+            if (File.Exists(filePath) is false)
+                return _default;
+
             TaskEx.RunOnSta(() =>
             {
                 var imageSource = GetImageSource(filePath);
