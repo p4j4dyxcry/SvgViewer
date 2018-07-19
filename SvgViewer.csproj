@@ -58,12 +58,14 @@
     </ApplicationDefinition>
     <Compile Include="Core\IFileObject.cs" />
     <Compile Include="Core\SvgThumbnailUtil.cs" />
+    <Compile Include="Utility\StaWorkerQueue.cs" />
     <Compile Include="Utility\TaskEx.cs" />
     <Compile Include="Utility\FreezableEx.cs" />
     <Compile Include="Core\ThumbnailService.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Utility\NotifyPropertyChanger.cs" />
     <Compile Include="Core\SvgThumbnailSystem.cs" />
+    <Compile Include="Utility\StaWorkerManager.cs" />
     <Compile Include="ViewModel\SvgVm.cs" />
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

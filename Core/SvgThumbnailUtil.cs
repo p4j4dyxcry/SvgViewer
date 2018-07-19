@@ -12,8 +12,6 @@ namespace SvgViewer.Core
 {
     internal static class SvgThumbnailUtil
     {
-        private static ConcurrentDictionary<string, Geometry> GeometryCache { get; } = new ConcurrentDictionary<string, Geometry>();
-
         internal static IEnumerable<string> ReadSvgFromFile(string filePath)
         {
             var result = new List<string>();
@@ -21,7 +19,6 @@ namespace SvgViewer.Core
             using (var reader = new StreamReader(filePath, new UTF8Encoding(false)))
             {
                 file.Load(reader);
-                reader.Close();
 
                 foreach (var path in file.GetElementsByTagName("path"))
                 {
@@ -40,21 +37,18 @@ namespace SvgViewer.Core
             }
             return result.ToArray();
         }
-        internal static Geometry GetGeometry(string filepath)
+        internal static PathGeometry GetGeometry(string filepath)
         {
-            if (GeometryCache.ContainsKey(filepath))
-                return GeometryCache[filepath];
-
             var svgDatas = ReadSvgFromFile(filepath);
 
             //! convert string array to Geometry
             var result = new PathGeometry();
-            foreach (var geometry in svgDatas.Select(x => Geometry.Parse(Regex.Replace(x, @"\n+", "")).GetFlattenedPathGeometry(0, ToleranceType.Absolute)))
+            foreach (var svgPath in svgDatas)
+            {
+                var geometry = Geometry.Parse(Regex.Replace(svgPath, @"\n+", ""));
                 result.AddGeometry(geometry);
-
-            GeometryCache[filepath] = result;
-
-            return result.DoFreeze();
+            }
+            return result;
         }
     }
 }

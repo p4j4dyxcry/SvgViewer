@@ -15,36 +15,44 @@ namespace SvgViewer.Core
         public Brush Fill { get; set; } = Brushes.Gray;
         public double StrokeThickness { get; set; } = 1;
         public PenLineJoin StrokeLineJoin { get; set; } = PenLineJoin.Round;
-        public int Width { get; set; } = 128;
-        public int Height { get; set; } = 128;
+        public int Width { get; set; } = 64;
+        public int Height { get; set; } = 64;
     }
 
     public class SvgThumbnailSystem
     {
         private readonly SvgUtilSetupInfo _setupInfo;
-        public SvgThumbnailSystem(SvgUtilSetupInfo setupInfo)
+        private readonly StaWorkerManager _staWorkerManager;
+        public bool UsingSingleThread { get; set; }
+        public SvgThumbnailSystem(SvgUtilSetupInfo setupInfo , StaWorkerManager workerManager = null)
         {
             _setupInfo = setupInfo ?? new SvgUtilSetupInfo();
+            _staWorkerManager = workerManager;
         }
+
 
         private void CreateThumbnail(string filePath)
         {
             var thumnbnailServis = new ThumbnailService(filePath);
-            var view = new Grid()
+            var view = new Border()
             {
                 Width = _setupInfo.Width,
                 Height = _setupInfo.Height,
             };
-            view.Children.Add(new System.Windows.Shapes.Path()
+
+            var pathGeometry = SvgThumbnailUtil.GetGeometry(filePath);
+
+            var path = new System.Windows.Shapes.Path()
             {
-                Data = SvgThumbnailUtil.GetGeometry(filePath),
+                Data = pathGeometry,
                 Fill = _setupInfo.Fill,
                 Stroke = _setupInfo.Stroke,
                 StrokeThickness = _setupInfo.StrokeThickness,
                 Stretch = Stretch.Uniform,
                 Opacity = 1.0,
                 StrokeLineJoin = _setupInfo.StrokeLineJoin,
-            });
+            };
+            view.Child = path;
 
             view.Measure(new Size(_setupInfo.Width, _setupInfo.Height));
             view.Arrange(new Rect(new Size(_setupInfo.Width, _setupInfo.Height)));
@@ -84,15 +92,41 @@ namespace SvgViewer.Core
             if (File.Exists(filePath) is false)
                 return _default;
 
-            TaskEx.RunOnSta(() =>
+            void DecodeAction()
             {
-                var imageSource = GetImageSource(filePath);
-                Application.Current.Dispatcher.Invoke(() => onLoaded(imageSource));
+                var thumnbnailServis = new ThumbnailService(filePath);
 
-                //! kill sta thread dispatcher. 
-                Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.SystemIdle);
-                Dispatcher.Run();
-            });
+                if (thumnbnailServis.ExistsThumnail is false)
+                    CreateThumbnail(filePath);
+                Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    var image = new BitmapImage();
+
+                    using (var memoryStream = thumnbnailServis.GetThumnailMemorySteream())
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = memoryStream;
+                        image.EndInit();
+                    }
+
+                    onLoaded(image.DoFreeze());
+                }, DispatcherPriority.Background);
+
+                if (UsingSingleThread is false)
+                {
+                    //! kill sta thread dispatcher. 
+                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.SystemIdle);
+                    Dispatcher.Run();
+                }
+            }
+
+            if(UsingSingleThread)
+                DecodeAction();
+            else if (_staWorkerManager != null)
+                _staWorkerManager.AddWork(DecodeAction);
+            else
+                TaskEx.RunOnSta(DecodeAction);
             return _default;
         }
     }

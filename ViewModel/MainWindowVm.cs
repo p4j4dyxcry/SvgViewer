@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
+using SvgViewer.Core;
 using SvgViewer.Utility;
 
 namespace SvgViewer.ViewModel
@@ -9,7 +10,7 @@ namespace SvgViewer.ViewModel
     public class MainWindowVm : NotifyPropertyChanger
     {
         public ObservableCollection<SvgVm> Items { get; } = new ObservableCollection<SvgVm>();
-
+        
         private double _scale = 128;
         public double Scale
         {
@@ -32,12 +33,13 @@ namespace SvgViewer.ViewModel
                     ItemsView.Filter = x => x.ToString().Contains(_filterWord);
             }
         }
+        private StaWorkerManager _workerManager = new StaWorkerManager(4);
         public MainWindowVm()
         {
             var svgs = Directory.EnumerateFiles("Svgs", "*.svg", SearchOption.AllDirectories);
-
+            var thumbnailSystem = new SvgThumbnailSystem(null,new StaWorkerManager(4));
             foreach (var svg in svgs)
-                Items.Add(new SvgVm(svg));
+                Items.Add(new SvgVm(svg, thumbnailSystem));
             ItemsView = new ListCollectionView(Items);
         }
     }
