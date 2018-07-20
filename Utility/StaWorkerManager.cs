@@ -5,25 +5,21 @@ namespace SvgViewer.Utility
     public class StaWorkerManager
     {
         private readonly StaWorkerQueue[] _workerQueue;
-        public int WorkerCount { get; }
         public StaWorkerManager(int workerCount)
         {
-            WorkerCount = workerCount <= 0 ? 1 : workerCount;
-            _workerQueue = new StaWorkerQueue[WorkerCount];
+            _workerQueue = new StaWorkerQueue[workerCount <= 0 ? 1 : workerCount];
+            for(var i = 0 ; i < workerCount ; ++i)
+                _workerQueue[i] = new StaWorkerQueue();
         }
 
-        private long _workerId ;
-        public void AddWork(Action action)
+        public void AddJob(Action job)
         {
-            _workerId = System.Threading.Interlocked.Increment(ref _workerId);
-
-            GetWorkerQueue(_workerId).AddWork(action);
+            GetLessWorkerQueue().AddJob(job);
         }
 
-        private StaWorkerQueue GetWorkerQueue(long id)
+        private StaWorkerQueue GetLessWorkerQueue()
         {
-            var tagetWorkerIndex = _workerId % WorkerCount;
-            return _workerQueue[tagetWorkerIndex] ?? (_workerQueue[tagetWorkerIndex] = new StaWorkerQueue());
+            return _workerQueue.FindMin(x => x.JobsCount);
         }
     }
 }

@@ -100,17 +100,7 @@ namespace SvgViewer.Core
                     CreateThumbnail(filePath);
                 Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    var image = new BitmapImage();
-
-                    using (var memoryStream = thumnbnailServis.GetThumnailMemorySteream())
-                    {
-                        image.BeginInit();
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-                        image.StreamSource = memoryStream;
-                        image.EndInit();
-                    }
-
-                    onLoaded(image.DoFreeze());
+                    onLoaded(GetImageSource(filePath));
                 }, DispatcherPriority.Background);
 
                 if (UsingSingleThread is false)
@@ -124,7 +114,7 @@ namespace SvgViewer.Core
             if(UsingSingleThread)
                 DecodeAction();
             else if (_staWorkerManager != null)
-                _staWorkerManager.AddWork(DecodeAction);
+                _staWorkerManager.AddJob(DecodeAction);
             else
                 TaskEx.RunOnSta(DecodeAction);
             return _default;

@@ -1,37 +1,31 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace SvgViewer.Utility
 {
     public class StaWorkerQueue
     {
-        private readonly ConcurrentQueue<Action> _actions = new ConcurrentQueue<Action>();
-        public void AddWork(Action work)
-        {
-            _actions.Enqueue(work);
-            Start();
-        }
+        private readonly ConcurrentQueue<Action> _jobs = new ConcurrentQueue<Action>();
+        public int JobsCount => _jobs.Count;
 
-        private bool _isRuning = false;
-        public bool IsRuning => _isRuning;
-        private void Start()
+        public void AddJob(Action job)
         {
-            if (_isRuning is false)
+            Task.Run(() =>
             {
-                _isRuning = true;
-                RunWork();
-            }
+                var isFirstJob = _jobs.IsEmpty;
+                _jobs.Enqueue(job);
+                if(isFirstJob is true)
+                    RunWork();
+            });
         }
 
         private void RunWork()
         {
-            _actions.TryDequeue(out var action);
+            _jobs.TryDequeue(out var action);
 
             if (action is null)
-            {
-                _isRuning = false;
                 return;
-            }
 
             TaskEx.RunOnSta(action)
                 .ContinueWith(x => RunWork());

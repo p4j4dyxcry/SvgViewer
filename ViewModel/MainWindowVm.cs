@@ -33,7 +33,7 @@ namespace SvgViewer.ViewModel
                     ItemsView.Filter = x => x.ToString().Contains(_filterWord);
             }
         }
-        private StaWorkerManager _workerManager = new StaWorkerManager(4);
+
         public MainWindowVm()
         {
             var svgs = Directory.EnumerateFiles("Svgs", "*.svg", SearchOption.AllDirectories);
