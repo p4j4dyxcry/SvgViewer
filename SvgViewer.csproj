@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -58,6 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\IFileObject.cs" />
     <Compile Include="Core\SvgThumbnailUtil.cs" />
+    <Compile Include="Utility\LinqEx.cs" />
     <Compile Include="Utility\StaWorkerQueue.cs" />
     <Compile Include="Utility\TaskEx.cs" />
     <Compile Include="Utility\FreezableEx.cs" />
@@ -107,6 +111,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
