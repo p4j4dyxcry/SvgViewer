@@ -15,8 +15,8 @@ namespace SvgViewer.Core
         public Brush Fill { get; set; } = Brushes.Gray;
         public double StrokeThickness { get; set; } = 1;
         public PenLineJoin StrokeLineJoin { get; set; } = PenLineJoin.Round;
-        public int Width { get; set; } = 64;
-        public int Height { get; set; } = 64;
+        public int Width { get; set; } = 256;
+        public int Height { get; set; } = 256;
     }
 
     public class SvgThumbnailSystem
@@ -30,6 +30,7 @@ namespace SvgViewer.Core
             _staWorkerManager = workerManager;
         }
 
+        private object _lock = new object();
 
         private void CreateThumbnail(string filePath)
         {
@@ -65,9 +66,12 @@ namespace SvgViewer.Core
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bmp));
 
-            thumnbnailServis.CreateThumbnailDirectory();
-            using (var stream = File.Create(thumnbnailServis.ThumbnailPath))
-                encoder.Save(stream);
+            lock (_lock)
+            {
+                thumnbnailServis.CreateThumbnailDirectory();
+                using (var stream = File.Create(thumnbnailServis.ThumbnailPath))
+                    encoder.Save(stream);
+            }
         }
 
         public ImageSource GetImageSource(string filePath)
@@ -101,14 +105,7 @@ namespace SvgViewer.Core
                 Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     onLoaded(GetImageSource(filePath));
-                }, DispatcherPriority.Background);
-
-                if (UsingSingleThread is false)
-                {
-                    //! kill sta thread dispatcher. 
-                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.SystemIdle);
-                    Dispatcher.Run();
-                }
+                }, DispatcherPriority.ContextIdle);
             }
 
             if(UsingSingleThread)

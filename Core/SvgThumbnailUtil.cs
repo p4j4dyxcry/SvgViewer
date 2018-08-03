@@ -1,12 +1,9 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Xml;
-using SvgViewer.Utility;
 
 namespace SvgViewer.Core
 {
@@ -15,6 +12,7 @@ namespace SvgViewer.Core
         internal static IEnumerable<string> ReadSvgFromFile(string filePath)
         {
             var result = new List<string>();
+
             var file = new XmlDocument();
             using (var reader = new StreamReader(filePath, new UTF8Encoding(false)))
             {

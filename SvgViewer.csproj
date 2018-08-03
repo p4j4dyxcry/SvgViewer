@@ -61,6 +61,8 @@
     </ApplicationDefinition>
     <Compile Include="Core\IFileObject.cs" />
     <Compile Include="Core\SvgThumbnailUtil.cs" />
+    <Compile Include="Utility\BackgroundStaWorkerThread.cs" />
+    <Compile Include="Utility\IWorkerQueue.cs" />
     <Compile Include="Utility\LinqEx.cs" />
     <Compile Include="Utility\StaWorkerQueue.cs" />
     <Compile Include="Utility\TaskEx.cs" />

@@ -4,17 +4,23 @@ using System.Threading.Tasks;
 
 namespace SvgViewer.Utility
 {
-    public class StaWorkerQueue
+    public class StaWorkerQueue : IWorkerQueue
     {
         private readonly ConcurrentQueue<Action> _jobs = new ConcurrentQueue<Action>();
         public int JobsCount => _jobs.Count;
+
+        public event Action Killed;
 
         public void AddJob(Action job)
         {
             Task.Run(() =>
             {
                 var isFirstJob = _jobs.IsEmpty;
-                _jobs.Enqueue(job);
+                _jobs.Enqueue(() =>
+                {
+                    job();
+                    Killed?.Invoke();
+                });
                 if(isFirstJob is true)
                     RunWork();
             });
@@ -29,6 +35,6 @@ namespace SvgViewer.Utility
 
             TaskEx.RunOnSta(action)
                 .ContinueWith(x => RunWork());
-        }
+        }       
     }
 }

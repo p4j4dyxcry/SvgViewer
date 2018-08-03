@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
+using System.Windows.Threading;
 using SvgViewer.Core;
 using SvgViewer.Utility;
 
@@ -37,7 +38,15 @@ namespace SvgViewer.ViewModel
         public MainWindowVm()
         {
             var svgs = Directory.EnumerateFiles("Svgs", "*.svg", SearchOption.AllDirectories);
-            var thumbnailSystem = new SvgThumbnailSystem(null,new StaWorkerManager(4));
+
+            var staWorkerManager = new StaWorkerManager(4, () =>
+            {
+                //! kill sta thread dispatcher. 
+                Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.SystemIdle);
+                Dispatcher.Run();
+            });
+
+            var thumbnailSystem = new SvgThumbnailSystem(null, staWorkerManager);
             foreach (var svg in svgs)
                 Items.Add(new SvgVm(svg, thumbnailSystem));
             ItemsView = new ListCollectionView(Items);
