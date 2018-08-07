@@ -56,4 +56,4 @@ dkms.conf
 *.DotSettings
 *.vs/
 *external/Svgs/
-*.Designer.cs
+.Thumbnail/
