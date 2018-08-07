@@ -3,10 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:virtualizingWrapPanel="clr-namespace:CodePlex.VirtualizingWrapPanel;assembly=VirtualizingWrapPanel"
         xmlns:viewModel="clr-namespace:SvgViewer.ViewModel"
+        xmlns:virtualizingWrapPanel="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+        xmlns:svgviewer="clr-namespace:SvgViewer"
         mc:Ignorable="d"
         Title="SvgViewer" Width="1080" Height="768" >
+    <Window.Resources>
+        <svgviewer:IntToSizeConverter x:Key="IntToSizeConverter"/>
+    </Window.Resources>
     <Window.DataContext>
         <viewModel:MainWindowVm/>
     </Window.DataContext>
@@ -36,7 +40,7 @@
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <virtualizingWrapPanel:VirtualizingWrapPanel ItemWidth="{Binding Scale}" ItemHeight="{Binding Scale}"/>
+                    <virtualizingWrapPanel:VirtualizingWrapPanel ChildrenSize="{Binding Scale,Converter={StaticResource IntToSizeConverter} ,Mode=OneWay}"/>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ItemsControl.ItemContainerStyle>

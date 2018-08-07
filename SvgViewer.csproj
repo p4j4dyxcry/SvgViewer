@@ -47,9 +47,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="VirtualizingWrapPanel">
-      <HintPath>external\VirtualizingWrapPanel\VirtualizingWrapPanel.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -61,6 +58,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\IFileObject.cs" />
     <Compile Include="Core\SvgThumbnailUtil.cs" />
+    <Compile Include="IntToSizeConverter.cs" />
     <Compile Include="Utility\BackgroundStaWorkerThread.cs" />
     <Compile Include="Utility\IWorkerQueue.cs" />
     <Compile Include="Utility\LinqEx.cs" />
@@ -115,6 +113,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="VirtualizingWrapPanel">
+      <Version>1.0.8</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
